@@ -1,0 +1,1 @@
+{"name":"modern-chinese-dictionary","version":"1.2.1","private":true,"type":"module","scripts":{"build:apk":"node scripts/build-apk.mjs","check":"node --check web/app.js"}}

@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {execFileSync} from 'node:child_process';
+const root=fileURLToPath(new URL('../',import.meta.url));
+const home=process.env.DICT_JAVA_HOME||process.env.JAVA_HOME;
+const exe=name=>home?path.join(home,'bin',name+(process.platform==='win32'?'.exe':'')):name;
+const output=path.join(root,'.android-build','checks-public');fs.mkdirSync(output,{recursive:true});
+const source=path.join(root,'android/app/src/main/java/io/github/huades/hanyudictionary/offline');
+const cases=['ReaderPositionTest','PlatformUiTest','VerifiedDatabaseTest'];
+execFileSync(exe('javac'),['-encoding','UTF-8','-d',output,...['ReaderPosition','ThemePolicy','InsetsGeometry','VerifiedDatabase'].map(n=>path.join(source,n+'.java')),...cases.map(n=>path.join(root,'tests',n+'.java'))],{stdio:'inherit'});
+for(const name of cases)execFileSync(exe('java'),['-cp',output,name,...(name==='VerifiedDatabaseTest'?[output]:[])],{stdio:'inherit'});
